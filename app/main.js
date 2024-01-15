@@ -16,10 +16,21 @@ async function getLivros() {
 const btnFilterBooks = document.querySelectorAll(".btn");
 btnFilterBooks.forEach((botao) => botao.addEventListener("click", filterBooks));
 
+const btnOrderByPrice = document.getElementById("btnOrdenarPorPreco");
+btnOrderByPrice.addEventListener("click", orderByPrice);
+
+function orderByPrice() {
+  let booksOrdered = livros.sort((a, b) => a.preco - b.preco);
+  showBooks(booksOrdered);
+}
+
 function filterBooks() {
   const elementoBtn = document.getElementById(this.id);
   const categoria = elementoBtn.value;
-  let livrosFiltrados = livros.filter((livro) => livro.categoria == categoria);
+  let livrosFiltrados =
+    categoria == "disponivel"
+      ? livros.filter((livro) => livro.quantidade > 0)
+      : livros.filter((livro) => livro.categoria == categoria);
   sectionLivros.innerHTML = "";
   showBooks(livrosFiltrados);
 }
