@@ -19,6 +19,10 @@ btnFilterBooks.forEach((botao) => botao.addEventListener("click", filterBooks));
 const btnOrderByPrice = document.getElementById("btnOrdenarPorPreco");
 btnOrderByPrice.addEventListener("click", orderByPrice);
 
+const elementPriceTotalAvailable = document.getElementById(
+  "valor_total_livros_disponiveis"
+);
+
 function orderByPrice() {
   let booksOrdered = livros.sort((a, b) => a.preco - b.preco);
   showBooks(booksOrdered);
@@ -29,13 +33,39 @@ function filterBooks() {
   const categoria = elementoBtn.value;
   let livrosFiltrados =
     categoria == "disponivel"
-      ? livros.filter((livro) => livro.quantidade > 0)
-      : livros.filter((livro) => livro.categoria == categoria);
+      ? filterByAvailability()
+      : filterByCategory(categoria);
   sectionLivros.innerHTML = "";
   showBooks(livrosFiltrados);
+  if (categoria == "disponivel") {
+    showAvailablePrice(livrosFiltrados);
+  }
+}
+
+function filterByCategory(categoria) {
+  return livros.filter((livro) => livro.categoria == categoria);
+}
+
+function filterByAvailability() {
+  return livros.filter((livro) => livro.quantidade > 0);
+}
+
+function showAvailablePrice(livros) {
+  console.log(livros);
+  const total = livros.reduce((acc, livro) => acc + livro.preco, 0).toFixed(2);
+  elementPriceTotalAvailable.innerHTML = `
+    <div class="livros__disponiveis">
+      <p>
+        Todos os livros disponíveis por R$
+        <span id="valor">R$${total}</span>
+      </p>
+    </div>
+`;
 }
 
 function showBooks(booksList) {
+  elementPriceTotalAvailable.innerHTML = "";
+  sectionLivros.innerHTML = "";
   // prettier-ignore
   booksList.forEach((book) => {
     sectionLivros.innerHTML += `<div class="livro">
